@@ -51,7 +51,7 @@ defmodule Mix.Tasks.Compile.Mib do
     mib_hrl_dest = Path.join([File.cwd!(), project[:erlc_include_path]])
 
     mib_includes =
-      Keyword.get(project, :mib_include_path, []) ++ ['#{mib_dest}' | project[:erlc_paths]]
+      Keyword.get(project, :mib_include_path, []) ++ [~c"#{mib_dest}" | project[:erlc_paths]]
 
     compile(manifest, [{mib_src, mib_dest}], :mib, :bin, opts, fn
       input, output ->
@@ -63,7 +63,7 @@ defmodule Mix.Tasks.Compile.Mib do
 
         {:ok, _} =
           :snmpc.compile(to_erl_file(input), [
-            {:outdir, '#{outdir}'},
+            {:outdir, ~c"#{outdir}"},
             {:i, mib_includes},
             {:group_check, false},
             :no_defs
@@ -81,7 +81,7 @@ defmodule Mix.Tasks.Compile.Mib do
         Logger.info("[MIB] Create MIB header: #{mib_name}")
 
         File.cd!(mib_dest, fn ->
-          :ok = :snmpc.mib_to_hrl('#{mib_name}')
+          :ok = :snmpc.mib_to_hrl(~c"#{mib_name}")
 
           hdr_name = "#{mib_name}.hrl"
           from = "./#{hdr_name}"
